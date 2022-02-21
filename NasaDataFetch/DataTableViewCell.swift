@@ -7,8 +7,14 @@
 
 import UIKit
 
+protocol DataTableViewCellDelegate: AnyObject {
+    func showDetail()
+}
+
 class DataTableViewCell: UITableViewCell {
 
+    weak var delegate: DataTableViewCellDelegate?
+    
     @IBOutlet var titlelbl: UILabel!
     @IBOutlet weak var movieImage: UIImageView!
     @IBOutlet var overViewLbl: UILabel!
@@ -24,12 +30,16 @@ class DataTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
+    
+    func configureCell(title: String?, overview: String?) {
+        titlelbl.text = title
+        overViewLbl.text = overview
+    }
+    
     @IBAction func showDetailsAction(_ sender: Any) {
+        delegate?.showDetail()
    
-//        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-
-//        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("nextView") as MovieDetailsVC
-//        self.presentViewController(nextViewController, animated:true, completion:nil)
+        
 
     }
     

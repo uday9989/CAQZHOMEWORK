@@ -8,6 +8,8 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    @IBOutlet weak var nameTextfield: UITextField!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -23,8 +25,11 @@ class ViewController: UIViewController {
     
     @IBAction func saveBtnAction(_ sender: Any) {
   
+        let name = nameTextfield.text
+        
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let destinationVC = storyboard.instantiateViewController(withIdentifier: "Details")
+        let destinationVC = storyboard.instantiateViewController(withIdentifier: "Details") as! DetailsViewController
+        destinationVC.name = name
         self.navigationController?.pushViewController(destinationVC, animated: true)
 
     }

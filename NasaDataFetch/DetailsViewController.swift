@@ -10,13 +10,18 @@ import UIKit
 
 class DetailsViewController: UIViewController, UITableViewDelegate,UITableViewDataSource {
 
+    var name: String?
+    @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var MoviesTbl: UITableView!
+    
+    private let networkManager = NetworkManager()
+    
     var moviesArray = [NewMovies]()
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-       
+        nameLabel.text = name
     }
     
     
@@ -24,13 +29,14 @@ class DetailsViewController: UIViewController, UITableViewDelegate,UITableViewDa
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        getJson() { (json) in
-            print(json)
-            self.moviesArray = json
-            DispatchQueue.main.async {
-                self.MoviesTbl.reloadData()
-            }
-            
+        networkManager
+            .getJson() { (json) in
+                print(json)
+                self.moviesArray = json
+                DispatchQueue.main.async {
+                    self.MoviesTbl.reloadData()
+                }
+                
         }
     }
     
@@ -43,19 +49,20 @@ class DetailsViewController: UIViewController, UITableViewDelegate,UITableViewDa
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-         return 10
+        return moviesArray.count
         
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         if let cell = tableView.dequeueReusableCell(withIdentifier: "DataTableViewCell") as? DataTableViewCell {
-
+            cell.delegate = self
+            let movie = moviesArray[indexPath.row]
+            cell.configureCell(title: movie.title, overview: movie.overview)
             return cell
-            }
-        else {
-                return UITableViewCell()
-            }
+        } else {
+            return UITableViewCell()
+        }
 
     }
     
@@ -76,4 +83,10 @@ class DetailsViewController: UIViewController, UITableViewDelegate,UITableViewDa
 }
 
 
-
+extension DetailsViewController: DataTableViewCellDelegate {
+    func showDetail() {
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "movieDetails") as! MovieDetailsVC
+        navigationController?.pushViewController(nextViewController, animated: true)
+    }
+}
